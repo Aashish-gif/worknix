@@ -21,6 +21,7 @@
     "@mui/x-date-pickers": "^7.25.0",
     "@tailwindcss/vite": "^4.0.7",
     "axios": "^1.7.9",
+    "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "framer-motion": "^12.4.0",
     "lucide-react": "^0.474.0",

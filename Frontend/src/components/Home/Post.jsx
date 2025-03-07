@@ -1396,155 +1396,155 @@
 // export default Post;
 
 
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { Heart, MessageCircle, Share2, MoreVertical, Trash2 } from "lucide-react";
-import { useUserContext } from "../UserContext";  // Importing useUserContext
+// import React, { useState, useEffect } from "react";
+// import { motion } from "framer-motion";
+// import { Heart, MessageCircle, Share2, MoreVertical, Trash2 } from "lucide-react";
+// import { useUserContext } from "../UserContext";  // Importing useUserContext
 
-const API_BASE_URL = "https://worknix-addpost.onrender.com/api/posts";
+// const API_BASE_URL = "https://worknix-addpost.onrender.com/api/posts";
 
-const Post = () => {
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+// const Post = () => {
+//   const [posts, setPosts] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await fetch(API_BASE_URL);
-        if (!response.ok) throw new Error("Failed to fetch posts");
-        const data = await response.json();
-        setPosts(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchPosts();
-  }, []);
+//   useEffect(() => {
+//     const fetchPosts = async () => {
+//       try {
+//         const response = await fetch(API_BASE_URL);
+//         if (!response.ok) throw new Error("Failed to fetch posts");
+//         const data = await response.json();
+//         setPosts(data);
+//       } catch (err) {
+//         setError(err.message);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+//     fetchPosts();
+//   }, []);
 
-  if (loading) return <p className="text-center text-gray-500">Loading posts...</p>;
-  if (error) return <p className="text-center text-red-500">Error: {error}</p>;
+//   if (loading) return <p className="text-center text-gray-500">Loading posts...</p>;
+//   if (error) return <p className="text-center text-red-500">Error: {error}</p>;
 
-  return (
-    <div>
-      {posts.map((post) => (
-        <PostCard key={post._id} post={post} setPosts={setPosts} />
-      ))}
-    </div>
-  );
-};
+//   return (
+//     <div>
+//       {posts.map((post) => (
+//         <PostCard key={post._id} post={post} setPosts={setPosts} />
+//       ))}
+//     </div>
+//   );
+// };
 
-const PostCard = ({ post, setPosts }) => {
-  const { username } = useUserContext();  // Getting the username from context
-  const [isLiked, setIsLiked] = useState(false);
-  const [showComments, setShowComments] = useState(false);
-  const [localLikes, setLocalLikes] = useState(post.likes || 0);
-  const [localComments, setLocalComments] = useState(post.comments || []);
-  const [showOptions, setShowOptions] = useState(false);
+// const PostCard = ({ post, setPosts }) => {
+//   const { username } = useUserContext();  // Getting the username from context
+//   const [isLiked, setIsLiked] = useState(false);
+//   const [showComments, setShowComments] = useState(false);
+//   const [localLikes, setLocalLikes] = useState(post.likes || 0);
+//   const [localComments, setLocalComments] = useState(post.comments || []);
+//   const [showOptions, setShowOptions] = useState(false);
 
-  const avatar = post.user?.avatar || "https://placehold.co/40/000000/FFF?text= ";  // Default avatar if not available
+//   const avatar = post.user?.avatar || "https://placehold.co/40/000000/FFF?text= ";  // Default avatar if not available
 
-  const handleLike = async () => {
-    if (isLiked) return;
-    setLocalLikes((prev) => prev + 1);
-    setIsLiked(true);
+//   const handleLike = async () => {
+//     if (isLiked) return;
+//     setLocalLikes((prev) => prev + 1);
+//     setIsLiked(true);
 
-    try {
-      const response = await fetch(`${API_BASE_URL}/${post._id}/like`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-      });
-      if (!response.ok) throw new Error("Failed to like post");
-    } catch (error) {
-      setLocalLikes((prev) => prev - 1);
-      setIsLiked(false);
-    }
-  };
+//     try {
+//       const response = await fetch(`${API_BASE_URL}/${post._id}/like`, {
+//         method: "PATCH",
+//         headers: { "Content-Type": "application/json" },
+//       });
+//       if (!response.ok) throw new Error("Failed to like post");
+//     } catch (error) {
+//       setLocalLikes((prev) => prev - 1);
+//       setIsLiked(false);
+//     }
+//   };
 
-  const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this post?")) return;
-    try {
-      const response = await fetch(`${API_BASE_URL}/${post._id}`, {
-        method: "DELETE",
-      });
-      if (!response.ok) throw new Error("Failed to delete post");
-      setPosts((prev) => prev.filter((p) => p._id !== post._id));
-    } catch (error) {
-      console.error("Error deleting post:", error);
-    }
-  };
+//   const handleDelete = async () => {
+//     if (!window.confirm("Are you sure you want to delete this post?")) return;
+//     try {
+//       const response = await fetch(`${API_BASE_URL}/${post._id}`, {
+//         method: "DELETE",
+//       });
+//       if (!response.ok) throw new Error("Failed to delete post");
+//       setPosts((prev) => prev.filter((p) => p._id !== post._id));
+//     } catch (error) {
+//       console.error("Error deleting post:", error);
+//     }
+//   };
 
-  return (
-    <motion.div
-      className="bg-white rounded-xl shadow-md overflow-hidden p-4 mb-4"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      layout
-    >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <img src={avatar} alt={username} className="w-10 h-10 rounded-full object-cover" />
-          <div>
-            <h3 className="font-semibold">{username || "Unknown User"}</h3>
-            <p className="text-sm text-gray-500">
-              {new Date(post.timestamp).toLocaleString("en-US", {
-                dateStyle: "medium",
-                timeStyle: "short",
-              })}
-            </p>
-          </div>
-        </div>
-        <div className="relative">
-          <button onClick={() => setShowOptions(!showOptions)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-            <MoreVertical size={20} className="text-gray-500" />
-          </button>
-          {showOptions && (
-            <div className="absolute right-0 mt-2 w-24 bg-white shadow-md rounded-md py-2 z-10">
-              <button
-                onClick={handleDelete}
-                className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
-              >
-                Delete
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
+//   return (
+//     <motion.div
+//       className="bg-white rounded-xl shadow-md overflow-hidden p-4 mb-4"
+//       initial={{ opacity: 0, y: 20 }}
+//       animate={{ opacity: 1, y: 0 }}
+//       exit={{ opacity: 0, y: -20 }}
+//       layout
+//     >
+//       <div className="flex items-center justify-between">
+//         <div className="flex items-center gap-3">
+//           <img src={avatar} alt={username} className="w-10 h-10 rounded-full object-cover" />
+//           <div>
+//             <h3 className="font-semibold">{username || "Unknown User"}</h3>
+//             <p className="text-sm text-gray-500">
+//               {new Date(post.timestamp).toLocaleString("en-US", {
+//                 dateStyle: "medium",
+//                 timeStyle: "short",
+//               })}
+//             </p>
+//           </div>
+//         </div>
+//         <div className="relative">
+//           <button onClick={() => setShowOptions(!showOptions)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+//             <MoreVertical size={20} className="text-gray-500" />
+//           </button>
+//           {showOptions && (
+//             <div className="absolute right-0 mt-2 w-24 bg-white shadow-md rounded-md py-2 z-10">
+//               <button
+//                 onClick={handleDelete}
+//                 className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
+//               >
+//                 Delete
+//               </button>
+//             </div>
+//           )}
+//         </div>
+//       </div>
 
-      <p className="mt-4">{post.description}</p>
-      {post.mediaUrl && (
-        <div className="mt-4 -mx-4">
-          {post.mediaType?.startsWith("image") ? (
-            <img src={post.mediaUrl} alt="Post Media" className="w-full" />
-          ) : (
-            <video controls className="w-full">
-              <source src={post.mediaUrl} type={post.mediaType} />
-            </video>
-          )}
-        </div>
-      )}
+//       <p className="mt-4">{post.description}</p>
+//       {post.mediaUrl && (
+//         <div className="mt-4 -mx-4">
+//           {post.mediaType?.startsWith("image") ? (
+//             <img src={post.mediaUrl} alt="Post Media" className="w-full" />
+//           ) : (
+//             <video controls className="w-full">
+//               <source src={post.mediaUrl} type={post.mediaType} />
+//             </video>
+//           )}
+//         </div>
+//       )}
 
-      <div className="mt-4 flex items-center gap-6">
-        <button onClick={handleLike} className="flex items-center gap-2 text-gray-500 hover:text-red-500 transition-colors">
-          <Heart size={20} className={isLiked ? "fill-red-500 text-red-500" : ""} />
-          <span>{localLikes}</span>
-        </button>
-        <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-2 text-gray-500 hover:text-teal-600 transition-colors">
-          <MessageCircle size={20} />
-          <span>{localComments.length}</span>
-        </button>
-        <button className="flex items-center gap-2 text-gray-500 hover:text-teal-600 transition-colors">
-          <Share2 size={20} />
-        </button>
-      </div>
-    </motion.div>
-  );
-};
+//       <div className="mt-4 flex items-center gap-6">
+//         <button onClick={handleLike} className="flex items-center gap-2 text-gray-500 hover:text-red-500 transition-colors">
+//           <Heart size={20} className={isLiked ? "fill-red-500 text-red-500" : ""} />
+//           <span>{localLikes}</span>
+//         </button>
+//         <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-2 text-gray-500 hover:text-teal-600 transition-colors">
+//           <MessageCircle size={20} />
+//           <span>{localComments.length}</span>
+//         </button>
+//         <button className="flex items-center gap-2 text-gray-500 hover:text-teal-600 transition-colors">
+//           <Share2 size={20} />
+//         </button>
+//       </div>
+//     </motion.div>
+//   );
+// };
 
-export default Post;
+// export default Post;
 
 // import React, { useState, useEffect } from "react";
 // import { motion } from "framer-motion";
@@ -1700,3 +1700,572 @@ export default Post;
 
 
 
+// import React, { useState, useEffect } from "react";
+// import { motion } from "framer-motion";
+// import { Heart, MessageCircle, Share2, MoreVertical, Trash2 } from "lucide-react";
+// import { useUserContext } from "../UserContext";
+// import { formatDistanceToNow } from "date-fns"; 
+
+// const API_BASE_URL = "https://worknix-addpost.onrender.com/api/posts";
+
+// const Post = () => {
+//   const [posts, setPosts] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+
+//   useEffect(() => {
+//     const fetchPosts = async () => {
+//       try {
+//         const response = await fetch(API_BASE_URL);
+//         if (!response.ok) throw new Error("Failed to fetch posts");
+//         const data = await response.json();
+//         setPosts(data);
+//       } catch (err) {
+//         setError(err.message);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+//     fetchPosts();
+//   }, []);
+
+//   if (loading) return <p className="text-center text-gray-500">Loading posts...</p>;
+//   if (error) return <p className="text-center text-red-500">Error: {error}</p>;
+
+//   return (
+//     <div>
+//       {posts.map((post) => (
+//         <PostCard key={post._id} post={post} setPosts={setPosts} />
+//       ))}
+//     </div>
+//   );
+// };
+
+// const PostCard = ({ post, setPosts }) => {
+//   const { username } = useUserContext();
+//   const [isLiked, setIsLiked] = useState(false);
+//   const [showComments, setShowComments] = useState(false);
+//   const [localLikes, setLocalLikes] = useState(post.likes || 0);
+//   const [localComments, setLocalComments] = useState(post.comments || []);
+//   const [showOptions, setShowOptions] = useState(false);
+
+//   const avatar = post.user?.avatar || "https://placehold.co/40/000000/FFF?text= ";  
+
+//   // Format createdAt timestamp into "2 minutes ago"
+//   const timeAgo = post.createdAt
+//     ? formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })
+//     : "Unknown time";
+
+//   // ✅ Check if the user has already liked this post
+//   useEffect(() => {
+//     const likedPosts = JSON.parse(localStorage.getItem("likedPosts")) || [];
+//     setIsLiked(likedPosts.includes(post._id));
+//   }, [post._id]);
+
+//   const handleLike = async () => {
+//     if (isLiked) return; // Prevent multiple likes
+
+//     setLocalLikes((prev) => prev + 1);
+//     setIsLiked(true);
+
+//     try {
+//       const response = await fetch(`${API_BASE_URL}/${post._id}/like`, {
+//         method: "PATCH",
+//         headers: { "Content-Type": "application/json" },
+//       });
+//       if (!response.ok) throw new Error("Failed to like post");
+
+//       // ✅ Store liked post in localStorage
+//       const likedPosts = JSON.parse(localStorage.getItem("likedPosts")) || [];
+//       likedPosts.push(post._id);
+//       localStorage.setItem("likedPosts", JSON.stringify(likedPosts));
+      
+//     } catch (error) {
+//       setLocalLikes((prev) => prev - 1);
+//       setIsLiked(false);
+//     }
+//   };
+
+//   const handleDelete = async () => {
+//     if (!window.confirm("Are you sure you want to delete this post?")) return;
+//     try {
+//       const response = await fetch(`${API_BASE_URL}/${post._id}`, {
+//         method: "DELETE",
+//       });
+//       if (!response.ok) throw new Error("Failed to delete post");
+//       setPosts((prev) => prev.filter((p) => p._id !== post._id));
+//     } catch (error) {
+//       console.error("Error deleting post:", error);
+//     }
+//   };
+
+//   return (
+//     <motion.div
+//       className="bg-white rounded-xl shadow-md overflow-hidden p-4 mb-4"
+//       initial={{ opacity: 0, y: 20 }}
+//       animate={{ opacity: 1, y: 0 }}
+//       exit={{ opacity: 0, y: -20 }}
+//       layout
+//     >
+//       <div className="flex items-center justify-between">
+//         <div className="flex items-center gap-3">
+//           <img src={avatar} alt={username} className="w-10 h-10 rounded-full object-cover" />
+//           <div>
+//             <h3 className="font-semibold">{username || "Unknown User"}</h3>
+//             <p className="text-sm text-gray-500">{timeAgo}</p>
+//           </div>
+//         </div>
+//         <div className="relative">
+//           <button onClick={() => setShowOptions(!showOptions)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+//             <MoreVertical size={20} className="text-gray-500" />
+//           </button>
+//           {showOptions && (
+//             <div className="absolute right-0 mt-2 w-24 bg-white shadow-md rounded-md py-2 z-10">
+//               <button
+//                 onClick={handleDelete}
+//                 className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
+//               >
+//                 Delete
+//               </button>
+//             </div>
+//           )}
+//         </div>
+//       </div>
+
+//       <p className="mt-4">{post.description}</p>
+//       {post.mediaUrl && (
+//         <div className="mt-4 -mx-4">
+//           {post.mediaType?.startsWith("image") ? (
+//             <img src={post.mediaUrl} alt="Post Media" className="w-full" />
+//           ) : (
+//             <video controls className="w-full">
+//               <source src={post.mediaUrl} type={post.mediaType} />
+//             </video>
+//           )}
+//         </div>
+//       )}
+
+//       <div className="mt-4 flex items-center gap-6">
+//         <button onClick={handleLike} className="flex items-center gap-2 text-gray-500 hover:text-red-500 transition-colors">
+//           <Heart size={20} className={isLiked ? "fill-red-500 text-red-500" : ""} />
+//           <span>{localLikes}</span>
+//         </button>
+//         <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-2 text-gray-500 hover:text-teal-600 transition-colors">
+//           <MessageCircle size={20} />
+//           <span>{localComments.length}</span>
+//         </button>
+//         <button className="flex items-center gap-2 text-gray-500 hover:text-teal-600 transition-colors">
+//           <Share2 size={20} />
+//         </button>
+//       </div>
+//     </motion.div>
+//   );
+// };
+
+// export default Post;
+// import React, { useState, useEffect } from "react";
+// import { motion } from "framer-motion";
+// import { Heart, MessageCircle, Share2, MoreVertical, Trash2 } from "lucide-react";
+// import { useUserContext } from "../UserContext";
+// import { formatDistanceToNow } from "date-fns"; 
+
+// const API_BASE_URL = "https://worknix-addpost.onrender.com/api/posts";
+
+// const Post = () => {
+//   const [posts, setPosts] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+
+//   useEffect(() => {
+//     const fetchPosts = async () => {
+//       try {
+//         const response = await fetch(API_BASE_URL);
+//         if (!response.ok) throw new Error("Failed to fetch posts");
+//         const data = await response.json();
+//         setPosts(data);
+//       } catch (err) {
+//         setError(err.message);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+//     fetchPosts();
+//   }, []);
+
+//   if (loading) return <p className="text-center text-gray-500">Loading posts...</p>;
+//   if (error) return <p className="text-center text-red-500">Error: {error}</p>;
+
+//   return (
+//     <div>
+//       {posts.map((post) => (
+//         <PostCard key={post._id} post={post} setPosts={setPosts} />
+//       ))}
+//     </div>
+//   );
+// };
+
+// const PostCard = ({ post, setPosts }) => {
+//   const { username } = useUserContext();
+//   const [isLiked, setIsLiked] = useState(false);
+//   const [showComments, setShowComments] = useState(false);
+//   const [localLikes, setLocalLikes] = useState(post.likes || 0);
+//   const [localComments, setLocalComments] = useState(post.comments || []);
+//   const [showOptions, setShowOptions] = useState(false);
+//   const [commentText, setCommentText] = useState(""); 
+
+//   const avatar = post.user?.avatar || "https://placehold.co/40/000000/FFF?text= ";  
+//   const timeAgo = post.createdAt
+//     ? formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })
+//     : "Unknown time";
+
+//   // ✅ Check if user has already liked this post
+//   useEffect(() => {
+//     const likedPosts = JSON.parse(localStorage.getItem("likedPosts")) || [];
+//     setIsLiked(likedPosts.includes(post._id));
+//   }, [post._id]);
+
+//   const handleLike = async () => {
+//     if (isLiked) return; // Prevent multiple likes
+
+//     setLocalLikes((prev) => prev + 1);
+//     setIsLiked(true);
+
+//     try {
+//       const response = await fetch(`${API_BASE_URL}/${post._id}/like`, {
+//         method: "PATCH",
+//         headers: { "Content-Type": "application/json" },
+//       });
+//       if (!response.ok) throw new Error("Failed to like post");
+
+//       const likedPosts = JSON.parse(localStorage.getItem("likedPosts")) || [];
+//       likedPosts.push(post._id);
+//       localStorage.setItem("likedPosts", JSON.stringify(likedPosts));
+      
+//     } catch (error) {
+//       setLocalLikes((prev) => prev - 1);
+//       setIsLiked(false);
+//     }
+//   };
+
+//   const handleAddComment = async () => {
+//     if (!commentText.trim()) return;
+
+//     try {
+//       const response = await fetch(`${API_BASE_URL}/${post._id}/comment`, {
+//         method: "PATCH",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({ comment: commentText }),
+//       });
+//       if (!response.ok) throw new Error("Failed to add comment");
+
+//       const updatedPost = await response.json();
+//       setLocalComments(updatedPost.comments); // Update comments
+//       setCommentText(""); // Clear input
+//     } catch (error) {
+//       console.error("Error adding comment:", error);
+//     }
+//   };
+
+//   const handleDelete = async () => {
+//     if (!window.confirm("Are you sure you want to delete this post?")) return;
+//     try {
+//       const response = await fetch(`${API_BASE_URL}/${post._id}`, {
+//         method: "DELETE",
+//       });
+//       if (!response.ok) throw new Error("Failed to delete post");
+//       setPosts((prev) => prev.filter((p) => p._id !== post._id));
+//     } catch (error) {
+//       console.error("Error deleting post:", error);
+//     }
+//   };
+
+//   return (
+//     <motion.div
+//       className="bg-white rounded-xl shadow-md overflow-hidden p-4 mb-4"
+//       initial={{ opacity: 0, y: 20 }}
+//       animate={{ opacity: 1, y: 0 }}
+//       exit={{ opacity: 0, y: -20 }}
+//       layout
+//     >
+//       <div className="flex items-center justify-between">
+//         <div className="flex items-center gap-3">
+//           <img src={avatar} alt={username} className="w-10 h-10 rounded-full object-cover" />
+//           <div>
+//             <h3 className="font-semibold">{username || "Unknown User"}</h3>
+//             <p className="text-sm text-gray-500">{timeAgo}</p>
+//           </div>
+//         </div>
+//         <div className="relative">
+//           <button onClick={() => setShowOptions(!showOptions)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+//             <MoreVertical size={20} className="text-gray-500" />
+//           </button>
+//           {showOptions && (
+//             <div className="absolute right-0 mt-2 w-24 bg-white shadow-md rounded-md py-2 z-10">
+//               <button
+//                 onClick={handleDelete}
+//                 className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
+//               >
+//                 Delete
+//               </button>
+//             </div>
+//           )}
+//         </div>
+//       </div>
+
+//       <p className="mt-4">{post.description}</p>
+//       {post.mediaUrl && (
+//         <div className="mt-4 -mx-4">
+//           {post.mediaType?.startsWith("image") ? (
+//             <img src={post.mediaUrl} alt="Post Media" className="w-full" />
+//           ) : (
+//             <video controls className="w-full">
+//               <source src={post.mediaUrl} type={post.mediaType} />
+//             </video>
+//           )}
+//         </div>
+//       )}
+
+//       <div className="mt-4 flex items-center gap-6">
+//         <button onClick={handleLike} className="flex items-center gap-2 text-gray-500 hover:text-red-500 transition-colors">
+//           <Heart size={20} className={isLiked ? "fill-red-500 text-red-500" : ""} />
+//           <span>{localLikes}</span>
+//         </button>
+//         <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-2 text-gray-500 hover:text-teal-600 transition-colors">
+//           <MessageCircle size={20} />
+//           <span>{localComments.length}</span>
+//         </button>
+//         <button className="flex items-center gap-2 text-gray-500 hover:text-teal-600 transition-colors">
+//           <Share2 size={20} />
+//         </button>
+//       </div>
+
+//       {/* Comment Section */}
+//       {showComments && (
+//         <div className="mt-4">
+//           <input
+//             type="text"
+//             value={commentText}
+//             onChange={(e) => setCommentText(e.target.value)}
+//             placeholder="Write a comment..."
+//             className="w-full p-2 border rounded-md"
+//           />
+//           <button
+//             onClick={handleAddComment}
+//             className="mt-2 bg-teal-600 text-white px-4 py-2 rounded-md"
+//           >
+//             Add Comment
+//           </button>
+//           {localComments.map((comment, index) => (
+//             <div key={index} className="mt-2 text-gray-700">
+//               {comment}
+//             </div>
+//           ))}
+//         </div>
+//       )}
+//     </motion.div>
+//   );
+// };
+
+// export default Post;
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Heart, MessageCircle, Share2, MoreVertical, Trash2 } from "lucide-react";
+import { useUserContext } from "../UserContext";
+import { formatDistanceToNow } from "date-fns";
+
+const API_BASE_URL = "https://worknix-addpost.onrender.com/api/posts";
+
+const Post = () => {
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await fetch(API_BASE_URL);
+        if (!response.ok) throw new Error("Failed to fetch posts");
+        const data = await response.json();
+        setPosts(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPosts();
+  }, []);
+
+  if (loading) return <p className="text-center text-gray-500">Loading posts...</p>;
+  if (error) return <p className="text-center text-red-500">Error: {error}</p>;
+
+  return (
+    <div>
+      {posts.map((post) => (
+        <PostCard key={post._id} post={post} setPosts={setPosts} />
+      ))}
+    </div>
+  );
+};
+
+const PostCard = ({ post, setPosts }) => {
+  const { username } = useUserContext();
+  const [isLiked, setIsLiked] = useState(false);
+  const [showComments, setShowComments] = useState(false);
+  const [localLikes, setLocalLikes] = useState(post.likes || 0);
+  const [localComments, setLocalComments] = useState(post.comments || []);
+  const [commentText, setCommentText] = useState("");
+  const [showOptions, setShowOptions] = useState(false);
+
+  const avatar = post.user?.avatar || "https://placehold.co/40/000000/FFF?text= ";  
+
+  const timeAgo = post.createdAt
+    ? formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })
+    : "Unknown time";
+
+  useEffect(() => {
+    const likedPosts = JSON.parse(localStorage.getItem("likedPosts")) || [];
+    setIsLiked(likedPosts.includes(post._id));
+  }, [post._id]);
+
+  const handleLike = async () => {
+    if (isLiked) return;
+
+    setLocalLikes((prev) => prev + 1);
+    setIsLiked(true);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/${post._id}/like`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (!response.ok) throw new Error("Failed to like post");
+
+      const likedPosts = JSON.parse(localStorage.getItem("likedPosts")) || [];
+      likedPosts.push(post._id);
+      localStorage.setItem("likedPosts", JSON.stringify(likedPosts));
+      
+    } catch (error) {
+      setLocalLikes((prev) => prev - 1);
+      setIsLiked(false);
+    }
+  };
+
+  const handleAddComment = async () => {
+    if (!commentText.trim()) return;
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/${post._id}/comment`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ comment: commentText }),
+      });
+
+      if (!response.ok) throw new Error("Failed to add comment");
+
+      const updatedPost = await response.json();
+
+      setLocalComments((prevComments) => [...prevComments, commentText]); 
+      setCommentText("");
+    } catch (error) {
+      console.error("Error adding comment:", error);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete this post?")) return;
+    try {
+      const response = await fetch(`${API_BASE_URL}/${post._id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) throw new Error("Failed to delete post");
+      setPosts((prev) => prev.filter((p) => p._id !== post._id));
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+  };
+
+  return (
+    <motion.div
+      className="bg-white rounded-xl shadow-md overflow-hidden p-4 mb-4"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      layout
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <img src={avatar} alt={username} className="w-10 h-10 rounded-full object-cover" />
+          <div>
+            <h3 className="font-semibold">{username || "Unknown User"}</h3>
+            <p className="text-sm text-gray-500">{timeAgo}</p>
+          </div>
+        </div>
+        <div className="relative">
+          <button onClick={() => setShowOptions(!showOptions)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+            <MoreVertical size={20} className="text-gray-500" />
+          </button>
+          {showOptions && (
+            <div className="absolute right-0 mt-2 w-24 bg-white shadow-md rounded-md py-2 z-10">
+              <button
+                onClick={handleDelete}
+                className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
+              >
+                Delete
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <p className="mt-4">{post.description}</p>
+      {post.mediaUrl && (
+        <div className="mt-4 -mx-4">
+          {post.mediaType?.startsWith("image") ? (
+            <img src={post.mediaUrl} alt="Post Media" className="w-full" />
+          ) : (
+            <video controls className="w-full">
+              <source src={post.mediaUrl} type={post.mediaType} />
+            </video>
+          )}
+        </div>
+      )}
+
+      <div className="mt-4 flex items-center gap-6">
+        <button onClick={handleLike} className="flex items-center gap-2 text-gray-500 hover:text-red-500 transition-colors">
+          <Heart size={20} className={isLiked ? "fill-red-500 text-red-500" : ""} />
+          <span>{localLikes}</span>
+        </button>
+        <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-2 text-gray-500 hover:text-teal-600 transition-colors">
+          <MessageCircle size={20} />
+          <span>{localComments.length}</span>
+        </button>
+        <button className="flex items-center gap-2 text-gray-500 hover:text-teal-600 transition-colors">
+          <Share2 size={20} />
+        </button>
+      </div>
+
+      {showComments && (
+        <div className="mt-4">
+          <input
+            type="text"
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
+            placeholder="Add a comment..."
+            className="border p-2 w-full rounded-md"
+          />
+          <button onClick={handleAddComment} className="mt-2 bg-teal-600 text-white px-4 py-2 rounded-md">
+            Comment
+          </button>
+          <ul className="mt-2">
+            {localComments.map((comment, index) => (
+              <li key={index} className="p-2 border-b">{comment}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </motion.div>
+  );
+};
+
+export default Post;

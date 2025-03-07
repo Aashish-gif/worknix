@@ -194,7 +194,7 @@ export function Main() {
                         <Hash size={16} className="text-gray-400" />
                         <span>{topic.name}</span>
                       </div>
-                      <span className="text-sm text-gray-500">{formatMemberCount(topic.members)}</span>
+                      {/* <span className="text-sm text-gray-500">{formatMemberCount(topic.members)}</span> */}
                     </motion.a>
                   ))}
                 </div>
