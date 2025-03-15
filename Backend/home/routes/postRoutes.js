@@ -426,3 +426,43 @@
 // module.exports = router;
 
 
+const { name } = useSelector((state) => state.user); // Get name from Redux store
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (!content.trim()) return;
+
+  setLoading(true);
+  setErrorMessage("");
+  setSuccessMessage("");
+
+  const formData = new FormData();
+  formData.append("description", content);
+  formData.append("name", name); // Include the name in the request
+  if (media?.file) {
+    formData.append("media", media.file);
+  }
+
+  try {
+    const response = await axios.post(
+      "https://worknix-addpost.onrender.com/api/posts",
+      formData,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    );
+
+    console.log("✅ Post uploaded successfully:", response.data);
+    onPost(response.data.post);
+
+    setContent("");
+    setMedia(null);
+    setIsExpanded(false);
+    setSuccessMessage("🎉 Post uploaded successfully!");
+
+    setTimeout(() => setSuccessMessage(""), 3000);
+  } catch (error) {
+    console.error("❌ Post upload failed:", error.response?.data || error);
+    setErrorMessage(error.response?.data?.error || "Failed to upload post.");
+  } finally {
+    setLoading(false);
+  }
+};
