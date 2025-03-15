@@ -32,9 +32,9 @@ function Navbar() {
 
                 {/* My Communities */}
                 <Link
-                  to="/community/my-communities"
+                  to="/profile"
                   className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
-                    isActive('/community/my-communities')
+                    isActive('/profile')
                       ? 'bg-teal-100 text-teal-700'
                       : 'hover:bg-teal-50 hover:text-teal-700'
                   }`}

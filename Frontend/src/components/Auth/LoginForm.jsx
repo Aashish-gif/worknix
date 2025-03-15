@@ -1989,16 +1989,446 @@
 // }
 
 // export default LoginForm;
-import React, { useState, useContext } from "react";
+// import React, { useState, useContext } from "react";
+// import { motion } from "framer-motion";
+// import { Eye, EyeOff } from "lucide-react";
+// import { AuthLayout } from "./AuthLayout";
+// import { useNavigate } from "react-router-dom";
+// import { UserContext } from "../UserContext";
+// import axios from "axios";
+
+// function LoginForm() {
+//   const { setUsername } = useContext(UserContext);
+//   const [formData, setFormData] = useState({
+//     email: "",
+//     password: "",
+//     userType: "employee",
+//   });
+
+//   const [showPassword, setShowPassword] = useState(false);
+//   const [isLoading, setIsLoading] = useState(false);
+//   const [errorMessage, setErrorMessage] = useState("");
+//   const [resetEmail, setResetEmail] = useState("");
+//   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
+//   const [resetSuccessMessage, setResetSuccessMessage] = useState("");
+//   const navigate = useNavigate();
+
+//   // ✅ Handle Password Reset Request
+//   const handlePasswordReset = async () => {
+//     if (!resetEmail) {
+//       setErrorMessage("Please enter your email.");
+//       return;
+//     }
+
+//     try {
+//       const response = await axios.post(
+//         "https://worknix-2.onrender.com/auth/password-reset",
+//         { email: resetEmail }
+//       );
+
+//       setResetSuccessMessage(response.data.message);
+//       setErrorMessage("");
+//     } catch (error) {
+//       setErrorMessage(
+//         error.response?.data?.message || "Error resetting password."
+//       );
+//     }
+//   };
+
+//   // ✅ Handle Login Submit
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setIsLoading(true);
+//     setErrorMessage("");
+
+//     try {
+//       const response = await axios.post(
+//         "https://worknix-2.onrender.com/auth/login",
+//         formData
+//       );
+
+//       const data = response.data;
+
+//       if (response.status === 200 && data.token) {
+//         console.log("Login successful:", data);
+
+//         const userId = data.userId;
+//         const username = data.name || "User";
+
+//         localStorage.setItem("token", data.token);
+//         localStorage.setItem("userType", data.userType);
+//         localStorage.setItem("userId", userId);
+//         localStorage.setItem("username", username);
+//         setUsername(username);
+
+//         alert(`Login successful! User ID: ${userId}`);
+//         navigate("/home");
+//       } else {
+//         setErrorMessage(data.message || "Login failed. Please try again.");
+//       }
+//     } catch (error) {
+//       setErrorMessage("An error occurred. Please try again.");
+//       console.error("Error logging in:", error);
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
+
+//   return (
+//     <AuthLayout title="Welcome Back">
+//       <form onSubmit={handleSubmit} className="space-y-6">
+//         {errorMessage && (
+//           <motion.div
+//             initial={{ opacity: 0 }}
+//             animate={{ opacity: 1 }}
+//             className="text-red-600 bg-red-100 p-2 rounded-md"
+//           >
+//             {errorMessage}
+//           </motion.div>
+//         )}
+
+//         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+//           <label className="block text-gray-700 font-medium mb-2">
+//             Select User Type
+//           </label>
+//           <select
+//             className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200"
+//             value={formData.userType}
+//             onChange={(e) =>
+//               setFormData({ ...formData, userType: e.target.value })
+//             }
+//             required
+//           >
+//             <option value="employee">Employee</option>
+//             <option value="company">Company</option>
+//           </select>
+//         </motion.div>
+
+//         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+//           <input
+//             type="email"
+//             placeholder="Email or Mobile Number"
+//             className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200"
+//             value={formData.email}
+//             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+//             required
+//           />
+//         </motion.div>
+
+//         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative">
+//           <input
+//             type={showPassword ? "text" : "password"}
+//             placeholder="Password"
+//             className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200"
+//             value={formData.password}
+//             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+//             required
+//           />
+//           <button
+//             type="button"
+//             onClick={() => setShowPassword(!showPassword)}
+//             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+//           >
+//             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+//           </button>
+//         </motion.div>
+
+//         <motion.div
+//           initial={{ opacity: 0, y: 20 }}
+//           animate={{ opacity: 1, y: 0 }}
+//           className="flex items-center justify-between"
+//         >
+//           <label className="flex items-center">
+//             <input
+//               type="checkbox"
+//               className="rounded border-gray-300 text-teal-600 focus:ring-teal-500 transition-colors"
+//             />
+//             <span className="ml-2 text-sm text-gray-600">Remember me</span>
+//           </label>
+//           <button
+//             type="button"
+//             onClick={() => setIsResetModalOpen(true)}
+//             className="text-sm text-teal-600 hover:text-teal-500 transition-colors font-medium"
+//           >
+//             Forgot Password?
+//           </button>
+//         </motion.div>
+
+//         <motion.button
+//           type="submit"
+//           className="w-full bg-[#008080] text-white py-3 rounded-lg hover:bg-teal-700 transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden"
+//           disabled={isLoading}
+//           whileTap={{ scale: 0.98 }}
+//           initial={{ opacity: 0, y: 20 }}
+//           animate={{ opacity: 1, y: 0 }}
+//         >
+//           {isLoading ? (
+//             <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+//           ) : (
+//             "Login"
+//           )}
+//         </motion.button>
+//       </form>
+
+//       {/* Password Reset Modal */}
+//       {isResetModalOpen && (
+//         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+//           <div className="bg-white p-6 rounded-lg shadow-md">
+//             <h2 className="text-lg font-bold">Reset Password</h2>
+//             <input
+//               type="email"
+//               placeholder="Enter your email"
+//               className="w-full px-4 py-3 mt-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500"
+//               value={resetEmail}
+//               onChange={(e) => setResetEmail(e.target.value)}
+//             />
+//             <button onClick={handlePasswordReset} className="w-full bg-teal-600 text-white py-2 mt-3 rounded-lg hover:bg-teal-700">
+//               Send Reset Link
+//             </button>
+//             <button onClick={() => setIsResetModalOpen(false)} className="mt-2 text-gray-600 underline">
+//               Close
+//             </button>
+//           </div>
+//         </div>
+//       )}
+//     </AuthLayout>
+//   );
+// }
+
+// export default LoginForm;
+
+
+// import React, { useState, useContext } from "react";
+// import { motion } from "framer-motion";
+// import { Eye, EyeOff } from "lucide-react";
+// import { AuthLayout } from "./AuthLayout";
+// import { useNavigate } from "react-router-dom";
+// import { UserContext } from "../UserContext";
+// import axios from "axios";
+
+// function LoginForm() {
+//   const { setUser } = useContext(UserContext);
+//   const [formData, setFormData] = useState({
+//     email: "",
+//     password: "",
+//     userType: "employee",
+//   });
+
+//   const [showPassword, setShowPassword] = useState(false);
+//   const [isLoading, setIsLoading] = useState(false);
+//   const [errorMessage, setErrorMessage] = useState("");
+//   const [resetEmail, setResetEmail] = useState("");
+//   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
+//   const [resetSuccessMessage, setResetSuccessMessage] = useState("");
+//   const navigate = useNavigate();
+
+//   // ✅ Handle Password Reset Request
+//   const handlePasswordReset = async () => {
+//     if (!resetEmail) {
+//       setErrorMessage("Please enter your email.");
+//       return;
+//     }
+
+//     try {
+//       const response = await axios.post(
+//         "https://worknix-2.onrender.com/auth/password-reset",
+//         { email: resetEmail }
+//       );
+
+//       setResetSuccessMessage(response.data.message);
+//       setErrorMessage("");
+//     } catch (error) {
+//       setErrorMessage(
+//         error.response?.data?.message || "Error resetting password."
+//       );
+//     }
+//   };
+
+//   // ✅ Handle Login Submit
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setIsLoading(true);
+//     setErrorMessage("");
+
+//     try {
+//       const response = await axios.post(
+//         "https://worknix-2.onrender.com/auth/login",
+//         formData
+//       );
+
+//       const data = response.data;
+
+//       if (response.status === 200 && data.token) {
+//         console.log("Login successful:", data);
+
+//         // Store user details in local storage
+//         localStorage.setItem("token", data.token);
+//         localStorage.setItem("userType", data.userType);
+//         localStorage.setItem("userId", data.userId);
+//         localStorage.setItem("username", data.name || "User");
+//         localStorage.setItem("email", data.email);
+//         localStorage.setItem(
+//           "profilePic",
+//           data.profilePic || "https://via.placeholder.com/150"
+//         );
+
+//         // Update UserContext
+//         setUser({
+//           userId: data.userId,
+//           username: data.name || "User",
+//           email: data.email,
+//           userType: data.userType,
+//           profilePic: data.profilePic || "https://via.placeholder.com/150",
+//         });
+
+//         alert(`Login successful! Welcome, ${data.name || "User"}.`);
+//         navigate("/home");
+//       } else {
+//         setErrorMessage(data.message || "Login failed. Please try again.");
+//       }
+//     } catch (error) {
+//       setErrorMessage("An error occurred. Please try again.");
+//       console.error("Error logging in:", error);
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
+
+//   return (
+//     <AuthLayout title="Welcome Back">
+//       <form onSubmit={handleSubmit} className="space-y-6">
+//         {errorMessage && (
+//           <motion.div
+//             initial={{ opacity: 0 }}
+//             animate={{ opacity: 1 }}
+//             className="text-red-600 bg-red-100 p-2 rounded-md"
+//           >
+//             {errorMessage}
+//           </motion.div>
+//         )}
+
+//         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+//           <label className="block text-gray-700 font-medium mb-2">
+//             Select User Type
+//           </label>
+//           <select
+//             className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200"
+//             value={formData.userType}
+//             onChange={(e) =>
+//               setFormData({ ...formData, userType: e.target.value })
+//             }
+//             required
+//           >
+//             <option value="employee">Employee</option>
+//             <option value="company">Company</option>
+//           </select>
+//         </motion.div>
+
+//         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+//           <input
+//             type="email"
+//             placeholder="Email or Mobile Number"
+//             className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200"
+//             value={formData.email}
+//             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+//             required
+//           />
+//         </motion.div>
+
+//         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative">
+//           <input
+//             type={showPassword ? "text" : "password"}
+//             placeholder="Password"
+//             className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200"
+//             value={formData.password}
+//             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+//             required
+//           />
+//           <button
+//             type="button"
+//             onClick={() => setShowPassword(!showPassword)}
+//             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+//           >
+//             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+//           </button>
+//         </motion.div>
+
+//         <motion.div
+//           initial={{ opacity: 0, y: 20 }}
+//           animate={{ opacity: 1, y: 0 }}
+//           className="flex items-center justify-between"
+//         >
+//           <label className="flex items-center">
+//             <input
+//               type="checkbox"
+//               className="rounded border-gray-300 text-teal-600 focus:ring-teal-500 transition-colors"
+//             />
+//             <span className="ml-2 text-sm text-gray-600">Remember me</span>
+//           </label>
+//           <button
+//             type="button"
+//             onClick={() => setIsResetModalOpen(true)}
+//             className="text-sm text-teal-600 hover:text-teal-500 transition-colors font-medium"
+//           >
+//             Forgot Password?
+//           </button>
+//         </motion.div>
+
+//         <motion.button
+//           type="submit"
+//           className="w-full bg-[#008080] text-white py-3 rounded-lg hover:bg-teal-700 transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden"
+//           disabled={isLoading}
+//           whileTap={{ scale: 0.98 }}
+//           initial={{ opacity: 0, y: 20 }}
+//           animate={{ opacity: 1, y: 0 }}
+//         >
+//           {isLoading ? (
+//             <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+//           ) : (
+//             "Login"
+//           )}
+//         </motion.button>
+//       </form>
+
+//       {/* Password Reset Modal */}
+//       {isResetModalOpen && (
+//         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+//           <div className="bg-white p-6 rounded-lg shadow-md">
+//             <h2 className="text-lg font-bold">Reset Password</h2>
+//             <input
+//               type="email"
+//               placeholder="Enter your email"
+//               className="w-full px-4 py-3 mt-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500"
+//               value={resetEmail}
+//               onChange={(e) => setResetEmail(e.target.value)}
+//             />
+//             <button onClick={handlePasswordReset} className="w-full bg-teal-600 text-white py-2 mt-3 rounded-lg hover:bg-teal-700">
+//               Send Reset Link
+//             </button>
+//             <button onClick={() => setIsResetModalOpen(false)} className="mt-2 text-gray-600 underline">
+//               Close
+//             </button>
+//           </div>
+//         </div>
+//       )}
+//     </AuthLayout>
+//   );
+// }
+
+// export default LoginForm;
+
+
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Eye, EyeOff } from "lucide-react";
 import { AuthLayout } from "./AuthLayout";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "../UserContext";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../RED/userSlice"; // Import the Redux action
 
 function LoginForm() {
-  const { setUsername } = useContext(UserContext);
+  const dispatch = useDispatch(); // Redux dispatch function
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -2052,22 +2482,40 @@ function LoginForm() {
       if (response.status === 200 && data.token) {
         console.log("Login successful:", data);
 
-        const userId = data.userId;
-        const username = data.name || "User";
+        // Determine the name based on user type
+        const name = data.userType === "employee" ? data.username : data.companyName;
 
+        // Store user details in local storage
         localStorage.setItem("token", data.token);
         localStorage.setItem("userType", data.userType);
-        localStorage.setItem("userId", userId);
-        localStorage.setItem("username", username);
-        setUsername(username);
+        localStorage.setItem("userId", data.userId || data.companyId); // Use userId or companyId
+        localStorage.setItem("name", name);
+        localStorage.setItem("email", data.email);
+        localStorage.setItem(
+          "profilePic",
+          data.profilePic || "https://via.placeholder.com/150"
+        );
 
-        alert(`Login successful! User ID: ${userId}`);
+        // Dispatch the loginUser action to update Redux store
+        dispatch(
+          loginUser({
+            userId: data.userId || data.companyId, // Use userId or companyId
+            name: name, // Can be username or companyName
+            email: data.email,
+            userType: data.userType,
+            profilePic: data.profilePic || "https://via.placeholder.com/150",
+          })
+        );
+
+        alert(`Login successful! Welcome, ${name}.`);
         navigate("/home");
       } else {
         setErrorMessage(data.message || "Login failed. Please try again.");
       }
     } catch (error) {
-      setErrorMessage("An error occurred. Please try again.");
+      setErrorMessage(
+        error.response?.data?.message || "An error occurred. Please try again."
+      );
       console.error("Error logging in:", error);
     } finally {
       setIsLoading(false);
@@ -2128,6 +2576,7 @@ function LoginForm() {
             type="button"
             onClick={() => setShowPassword(!showPassword)}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+            aria-label={showPassword ? "Hide password" : "Show password"}
           >
             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
           </button>

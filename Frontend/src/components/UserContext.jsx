@@ -1,39 +1,59 @@
-// // UserContext.js
-// import React, { createContext, useState, useContext } from "react";
+// import { createContext, useState, useEffect } from "react";
 
-// // Create context
 // export const UserContext = createContext();
 
-// // UserProvider component that will wrap the app and provide the context value
 // export const UserProvider = ({ children }) => {
-//   const [username, setUsername] = useState("Default User"); // Default or fetched username
+//   const [user, setUser] = useState(() => {
+//     const savedUser = localStorage.getItem("user");
+//     return savedUser ? JSON.parse(savedUser) : {
+//       userId: null,
+//       username: null,
+//       email: null,
+//       userType: null,
+//       profilePic: "https://via.placeholder.com/150",
+//     };
+//   });
+
+//   useEffect(() => {
+//     localStorage.setItem("user", JSON.stringify(user));
+//   }, [user]);
 
 //   return (
-//     <UserContext.Provider value={{ username, setUsername }}>
+//     <UserContext.Provider value={{ user, setUser }}>
 //       {children}
 //     </UserContext.Provider>
 //   );
 // };
 
-// // Custom hook to use UserContext
-// export const useUserContext = () => useContext(UserContext);
 
-// UserContext.jsx
-import React, { createContext, useState, useContext } from "react";
+import { createContext, useState, useEffect, useContext } from "react";
 
-// Create the UserContext
 export const UserContext = createContext();
 
-// UserProvider component to wrap the part of the app that needs access to the context
 export const UserProvider = ({ children }) => {
-  const [username, setUsername] = useState(null);
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem("user");
+    return savedUser
+      ? JSON.parse(savedUser)
+      : {
+          userId: null,
+          username: null,
+          email: null,
+          userType: null,
+          profilePic: "https://via.placeholder.com/150",
+        };
+  });
+
+  useEffect(() => {
+    localStorage.setItem("user", JSON.stringify(user));
+  }, [user]);
 
   return (
-    <UserContext.Provider value={{ username, setUsername }}>
+    <UserContext.Provider value={{ user, setUser }}>
       {children}
     </UserContext.Provider>
   );
 };
 
-// Custom hook to use UserContext
+// Add this custom hook
 export const useUserContext = () => useContext(UserContext);
