@@ -475,21 +475,187 @@
 // });
 
 // module.exports = router;
+// const express = require("express");
+// const bcrypt = require("bcryptjs");
+// const jwt = require("jsonwebtoken");
+// const Company = require("../models/Company");
+// const auth = require("../middleware/auth"); // Middleware to protect routes
+// const router = express.Router();
+
+// // ✅ Signup Route
+// router.post("/signup", async (req, res) => {
+//   try {
+//     const { companyName, email, password } = req.body;
+
+//     // Check if email already exists
+//     const existingCompany = await Company.findOne({ email });
+//     if (existingCompany) return res.status(400).json({ message: "Email already exists" });
+
+//     // Hash the password
+//     const hashedPassword = await bcrypt.hash(password, 10);
+
+//     // Generate Unique Company ID
+//     const companyCount = await Company.countDocuments();
+//     const companyId = `WC${new Date().getFullYear().toString().slice(-2)}${String(companyCount + 1).padStart(4, "0")}`;
+
+//     // Create new company
+//     const newCompany = new Company({ companyName, email, password: hashedPassword, companyId });
+//     await newCompany.save();
+
+//     res.status(201).json({ message: "Company registered successfully", companyId });
+
+//   } catch (error) {
+//     res.status(500).json({ message: "Server error", error });
+//   }
+// });
+
+// // ✅ Login Route
+// router.post("/login", async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
+
+//     // Find company by email (select password manually since it's excluded in schema)
+//     const company = await Company.findOne({ email }).select("+password");
+//     if (!company) return res.status(400).json({ message: "Company not found" });
+
+//     // Compare passwords
+//     const isMatch = await bcrypt.compare(password, company.password);
+//     if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+
+//     // Generate JWT Token
+//     const token = jwt.sign(
+//       {
+//         id: company._id,
+//         companyName: company.companyName,
+//         email: company.email,
+//         companyId: company.companyId,
+//       },
+//       process.env.JWT_SECRET,
+//       { expiresIn: "7d" }
+//     );
+
+//     // Remove password before sending response
+//     const { password: _, ...companyData } = company.toObject();
+
+//     res.json({ message: "Login successful", token, company: companyData });
+
+//   } catch (error) {
+//     res.status(500).json({ message: "Server error", error });
+//   }
+// });
+
+// // ✅ Get Company Profile (Protected Route)
+// router.get("/profile", auth, async (req, res) => {
+//   try {
+//     res.json({ message: "Company profile fetched", company: req.company });
+//   } catch (error) {
+//     res.status(500).json({ message: "Server error", error });
+//   }
+// });
+
+// module.exports = router;
+// const express = require("express");
+// const bcrypt = require("bcryptjs");
+// const jwt = require("jsonwebtoken");
+// const Company = require("../models/Company");
+// const auth = require("../middleware/auth"); // Middleware to protect routes
+// const router = express.Router();
+
+// // ✅ Signup Route
+// router.post("/signup", async (req, res) => {
+//   try {
+//     const { companyName, email, password } = req.body;
+
+//     // Check if email already exists
+//     const existingCompany = await Company.findOne({ email });
+//     if (existingCompany) return res.status(400).json({ message: "Email already exists" });
+
+//     // Hash the password
+//     const hashedPassword = await bcrypt.hash(password, 10);
+
+//     // Generate Unique Company ID
+//     const companyCount = await Company.countDocuments();
+//     const companyId = `WC${new Date().getFullYear().toString().slice(-2)}${String(companyCount + 1).padStart(4, "0")}`;
+
+//     // Create new company
+//     const newCompany = new Company({ companyName, email, password: hashedPassword, companyId });
+//     await newCompany.save();
+
+//     res.status(201).json({ message: "Company registered successfully", companyId });
+
+//   } catch (error) {
+//     res.status(500).json({ message: "Server error", error });
+//   }
+// });
+
+// // ✅ Login Route
+// router.post("/login", async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
+
+//     // Find company by email (select password manually since it's excluded in schema)
+//     const company = await Company.findOne({ email }).select("+password");
+//     if (!company) return res.status(400).json({ message: "Company not found" });
+
+//     // Compare passwords
+//     const isMatch = await bcrypt.compare(password, company.password);
+//     if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+
+//     // Generate JWT Token
+//     const token = jwt.sign(
+//       {
+//         id: company._id,
+//         companyName: company.companyName,
+//         email: company.email,
+//         companyId: company.companyId,
+//       },
+//       process.env.JWT_SECRET,
+//       { expiresIn: "7d" }
+//     );
+
+//     // Remove password before sending response
+//     const { password: _, ...companyData } = company.toObject();
+
+//     res.json({ message: "Login successful", token, company: companyData });
+
+//   } catch (error) {
+//     res.status(500).json({ message: "Server error", error });
+//   }
+// });
+
+// // ✅ Get Company Profile (Protected Route)
+// router.get("/profile", auth, async (req, res) => {
+//   try {
+//     res.json({ message: "Company profile fetched", company: req.company });
+//   } catch (error) {
+//     res.status(500).json({ message: "Server error", error });
+//   }
+// });
+
+// module.exports = router;
+
+
+
+// u have to pass both if company so company dat if user so uiser daata\
+
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Company = require("../models/Company");
+const User = require("../models/User"); // Import the User model
 const auth = require("../middleware/auth"); // Middleware to protect routes
 const router = express.Router();
 
-// ✅ Signup Route
-router.post("/signup", async (req, res) => {
+// ✅ Signup Route for Company
+router.post("/company/signup", async (req, res) => {
   try {
     const { companyName, email, password } = req.body;
 
     // Check if email already exists
     const existingCompany = await Company.findOne({ email });
-    if (existingCompany) return res.status(400).json({ message: "Email already exists" });
+    if (existingCompany) {
+      return res.status(400).json({ success: false, message: "Email already exists" });
+    }
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -502,54 +668,131 @@ router.post("/signup", async (req, res) => {
     const newCompany = new Company({ companyName, email, password: hashedPassword, companyId });
     await newCompany.save();
 
-    res.status(201).json({ message: "Company registered successfully", companyId });
-
+    res.status(201).json({
+      success: true,
+      message: "Company registered successfully",
+      data: { companyId },
+    });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
 });
 
-// ✅ Login Route
+// ✅ Signup Route for User (Employee)
+router.post("/user/signup", async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+
+    // Check if email already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ success: false, message: "Email already exists" });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Generate Unique User ID
+    const userCount = await User.countDocuments();
+    const userId = `WE${new Date().getFullYear().toString().slice(-2)}${String(userCount + 1).padStart(4, "0")}`;
+
+    // Create new user
+    const newUser = new User({ username, email, password: hashedPassword, userId });
+    await newUser.save();
+
+    res.status(201).json({
+      success: true,
+      message: "User registered successfully",
+      data: { userId },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error", error: error.message });
+  }
+});
+
+// ✅ Login Route (Handles both Company and User)
 router.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, userType } = req.body; // userType can be "company" or "user"
 
-    // Find company by email (select password manually since it's excluded in schema)
-    const company = await Company.findOne({ email }).select("+password");
-    if (!company) return res.status(400).json({ message: "Company not found" });
+    let entity;
+    if (userType === "company") {
+      // Find company by email
+      entity = await Company.findOne({ email }).select("+password");
+      if (!entity) {
+        return res.status(400).json({ success: false, message: "Company not found" });
+      }
+    } else if (userType === "user") {
+      // Find user by email
+      entity = await User.findOne({ email }).select("+password");
+      if (!entity) {
+        return res.status(400).json({ success: false, message: "User not found" });
+      }
+    } else {
+      return res.status(400).json({ success: false, message: "Invalid user type" });
+    }
 
     // Compare passwords
-    const isMatch = await bcrypt.compare(password, company.password);
-    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+    const isMatch = await bcrypt.compare(password, entity.password);
+    if (!isMatch) {
+      return res.status(400).json({ success: false, message: "Invalid credentials" });
+    }
 
     // Generate JWT Token
-    const token = jwt.sign(
-      {
-        id: company._id,
-        companyName: company.companyName,
-        email: company.email,
-        companyId: company.companyId,
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+    const tokenPayload =
+      userType === "company"
+        ? {
+            id: entity._id,
+            companyName: entity.companyName,
+            email: entity.email,
+            companyId: entity.companyId,
+            userType: "company", // Add userType to differentiate
+          }
+        : {
+            id: entity._id,
+            username: entity.username,
+            email: entity.email,
+            userId: entity.userId,
+            userType: "user", // Add userType to differentiate
+          };
+
+    const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, { expiresIn: "7d" });
 
     // Remove password before sending response
-    const { password: _, ...companyData } = company.toObject();
+    const { password: _, ...entityData } = entity.toObject();
 
-    res.json({ message: "Login successful", token, company: companyData });
-
+    res.json({
+      success: true,
+      message: "Login successful",
+      data: { token, userType, entity: entityData }, // Return entity data and userType
+    });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
 });
 
-// ✅ Get Company Profile (Protected Route)
+// ✅ Get Profile (Protected Route - Handles both Company and User)
 router.get("/profile", auth, async (req, res) => {
   try {
-    res.json({ message: "Company profile fetched", company: req.company });
+    const { userType, company, user } = req; // Set by the auth middleware
+
+    if (userType === "company") {
+      res.json({
+        success: true,
+        message: "Company profile fetched",
+        data: { company },
+      });
+    } else if (userType === "user") {
+      res.json({
+        success: true,
+        message: "User profile fetched",
+        data: { user },
+      });
+    } else {
+      res.status(400).json({ success: false, message: "Invalid user type" });
+    }
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
 });
 

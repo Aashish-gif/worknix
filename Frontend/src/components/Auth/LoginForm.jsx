@@ -2659,7 +2659,7 @@ import { AuthLayout } from "./AuthLayout";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { setUser } from "../redux/authSlice"; // Unified Redux action
+import { setUser } from "../../Redux/authSlice"; // Unified Redux action
 
 function LoginForm() {
   const dispatch = useDispatch();
