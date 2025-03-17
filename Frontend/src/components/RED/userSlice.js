@@ -1,37 +1,41 @@
+// src/components/RED/userSlice.js
 import { createSlice } from "@reduxjs/toolkit";
-
-const initialState = {
-  userId: null, // For both employee and company
-  name: null, // Can be username (employee) or companyName (company)
-  email: null,
-  userType: null, // "employee" or "company"
-  profilePic: null,
-  isAuthenticated: false,
-};
 
 const userSlice = createSlice({
   name: "user",
-  initialState,
+  initialState: {
+    name: null, // Default to null
+    email: null, // Default to null
+    profilePic: null, // Default to null
+    type: null, // Default to null (user or company)
+  },
   reducers: {
+    // Action for logging in as a user
     loginUser: (state, action) => {
-      const { userId, name, email, userType, profilePic } = action.payload;
-      state.userId = userId;
-      state.name = name; // Can be username or companyName
-      state.email = email;
-      state.userType = userType;
-      state.profilePic = profilePic;
-      state.isAuthenticated = true;
+      state.name = action.payload.username;
+      state.email = action.payload.email;
+      state.profilePic = action.payload.profilePic || "https://placehold.co/40/008080/FFF?text=U";
+      state.type = "user";
     },
-    logoutUser: (state) => {
-      state.userId = null;
+    // Action for logging in as a company
+    loginCompany: (state, action) => {
+      state.name = action.payload.companyName;
+      state.email = action.payload.email;
+      state.profilePic = action.payload.profilePic || "https://placehold.co/40/008080/FFF?text=C";
+      state.type = "company";
+    },
+    // Action for logging out
+    logout: (state) => {
       state.name = null;
       state.email = null;
-      state.userType = null;
       state.profilePic = null;
-      state.isAuthenticated = false;
+      state.type = null;
     },
   },
 });
 
-export const { loginUser, logoutUser } = userSlice.actions;
+// Export the actions
+export const { loginUser, loginCompany, logout } = userSlice.actions;
+
+// Export the reducer
 export default userSlice.reducer;

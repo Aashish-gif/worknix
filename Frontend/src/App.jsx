@@ -768,12 +768,115 @@
 // }
 
 // export default App;
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// import React from "react";
+// import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+// import { Provider } from "react-redux"; // Import Redux Provider
+// import  store  from "./components/RED/store"; // Import the Redux store
+// import LoginForm from "./components/Auth/LoginForm";
+// import { SignupForm } from "./components/Auth/SignupForm"; // Fixed inconsistent path casing
+// import ForgotPassword from "./components/Auth/ForgotPassword";
+// import ResetPassword from "./components/Auth/ResetPassword";
+// import Home from "./components/Home/Home";
+// import Community from "./components/Community/Community";
+// import TodaysStats from "./components/TodaysStats/TodaysStats";
+// import UserProfile from "./components/UserProfile/UserProfile";
+// import Profiles from "./components/UserProfile/Profiles";
+// import Action from "./components/Action/Action";
+// import WorkflowPage from "./components/Workflow/Workflow";
+// import Attendance from "./components/Attendance/Attendance";
+// import ProtectedRoute from "./components/ProtectedRoute"; // Ensure the path is correct
+
+// function App() {
+//   return (
+//     <Provider store={store}> {/* Wrap the entire app with Redux Provider */}
+//       <Router>
+//         <Routes>
+//           {/* Public Routes */}
+//           <Route path="/" element={<LoginForm />} />
+//           <Route path="/signup" element={<SignupForm />} />
+//           <Route path="/forgot-password" element={<ForgotPassword />} />
+//           <Route path="/reset-password/:token" element={<ResetPassword />} />
+
+//           {/* Protected Routes */}
+//           <Route
+//             path="/home"
+//             element={
+//               <ProtectedRoute>
+//                 <Home />
+//               </ProtectedRoute>
+//             }
+//           />
+//           <Route
+//             path="/community/*"
+//             element={
+//               <ProtectedRoute>
+//                 <Community />
+//               </ProtectedRoute>
+//             }
+//           />
+//           <Route
+//             path="/todays-stats"
+//             element={
+//               <ProtectedRoute>
+//                 <TodaysStats />
+//               </ProtectedRoute>
+//             }
+//           />
+//           <Route
+//             path="/user-profile"
+//             element={
+//               <ProtectedRoute>
+//                 <UserProfile />
+//               </ProtectedRoute>
+//             }
+//           />
+//           <Route
+//             path="/profile"
+//             element={
+//               <ProtectedRoute>
+//                 <Profiles />
+//               </ProtectedRoute>
+//             }
+//           />
+//           <Route
+//             path="/actions"
+//             element={
+//               <ProtectedRoute>
+//                 <Action />
+//               </ProtectedRoute>
+//             }
+//           />
+//           <Route
+//             path="/workflow/*"
+//             element={
+//               <ProtectedRoute>
+//                 <WorkflowPage />
+//               </ProtectedRoute>
+//             }
+//           />
+//           <Route
+//             path="/attendance"
+//             element={
+//               <ProtectedRoute>
+//                 <Attendance />
+//               </ProtectedRoute>
+//             }
+//           />
+//         </Routes>
+//       </Router>
+//     </Provider>
+//   );
+// }
+
+// export default App;
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Provider } from "react-redux"; // Import Redux Provider
-import { store } from "./components/RED/store"; // Import the Redux store
+import { Provider } from "react-redux"; 
+import store from "./components/RED/store"; 
 import LoginForm from "./components/Auth/LoginForm";
-import { SignupForm } from "./components/Auth/SignupForm"; // Fixed inconsistent path casing
+import { SignupForm } from "./components/Auth/SignupForm"; 
 import ForgotPassword from "./components/Auth/ForgotPassword";
 import ResetPassword from "./components/Auth/ResetPassword";
 import Home from "./components/Home/Home";
@@ -784,11 +887,11 @@ import Profiles from "./components/UserProfile/Profiles";
 import Action from "./components/Action/Action";
 import WorkflowPage from "./components/Workflow/Workflow";
 import Attendance from "./components/Attendance/Attendance";
-import ProtectedRoute from "./components/ProtectedRoute"; // Ensure the path is correct
+import ProtectedRoute from "./components/ProtectedRoute"; 
 
 function App() {
   return (
-    <Provider store={store}> {/* Wrap the entire app with Redux Provider */}
+    <Provider store={store}> 
       <Router>
         <Routes>
           {/* Public Routes */}
@@ -798,70 +901,14 @@ function App() {
           <Route path="/reset-password/:token" element={<ResetPassword />} />
 
           {/* Protected Routes */}
-          <Route
-            path="/home"
-            element={
-              <ProtectedRoute>
-                <Home />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/community/*"
-            element={
-              <ProtectedRoute>
-                <Community />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/todays-stats"
-            element={
-              <ProtectedRoute>
-                <TodaysStats />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/user-profile"
-            element={
-              <ProtectedRoute>
-                <UserProfile />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <Profiles />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/actions"
-            element={
-              <ProtectedRoute>
-                <Action />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/workflow/*"
-            element={
-              <ProtectedRoute>
-                <WorkflowPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/attendance"
-            element={
-              <ProtectedRoute>
-                <Attendance />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+          <Route path="/community/*" element={<ProtectedRoute><Community /></ProtectedRoute>} />
+          <Route path="/todays-stats" element={<ProtectedRoute><TodaysStats /></ProtectedRoute>} />
+          <Route path="/user-profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><Profiles /></ProtectedRoute>} />
+          <Route path="/actions" element={<ProtectedRoute><Action /></ProtectedRoute>} />
+          <Route path="/workflow/*" element={<ProtectedRoute><WorkflowPage /></ProtectedRoute>} />
+          <Route path="/attendance" element={<ProtectedRoute><Attendance /></ProtectedRoute>} />
         </Routes>
       </Router>
     </Provider>
