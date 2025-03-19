@@ -1346,6 +1346,213 @@
 // }
 
 //////////////////////////////////////////////////////////
+// import React, { useState } from "react";
+// import { motion } from "framer-motion";
+// import { Eye, EyeOff } from "lucide-react";
+// import { AuthLayout } from "./AuthLayout";
+// import { useNavigate } from "react-router-dom";
+// import axios from "axios";
+// import { useDispatch } from "react-redux";
+// import { loginUser, loginCompany } from "../RED/userSlice"; // Import Redux actions
+
+// export function SignupForm() {
+//   const [formData, setFormData] = useState({
+//     username: "",
+//     email: "",
+//     password: "",
+//     confirmPassword: "",
+//     type: "employee",
+//   });
+
+//   const [showPassword, setShowPassword] = useState(false);
+//   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+//   const [isLoading, setIsLoading] = useState(false);
+//   const [errorMessage, setErrorMessage] = useState("");
+  
+//   const navigate = useNavigate();
+//   const dispatch = useDispatch(); // Redux dispatch
+
+//   // Handle input changes
+//   const handleChange = (e) => {
+//     setFormData({ ...formData, [e.target.name]: e.target.value });
+//   };
+
+//   // Handle form submission
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setIsLoading(true);
+//     setErrorMessage("");
+
+//     // Password validation
+//     if (formData.password.length < 6) {
+//       setErrorMessage("Password must be at least 6 characters long.");
+//       setIsLoading(false);
+//       return;
+//     }
+
+//     if (formData.password.trim() !== formData.confirmPassword.trim()) {
+//       setErrorMessage("Passwords do not match.");
+//       setIsLoading(false);
+//       return;
+//     }
+
+//     try {
+//       const response = await axios.post(
+//         "https://worknix-2.onrender.com/auth/signup",
+//         formData
+//       );
+
+//       console.log("Signup successful:", response.data);
+
+//       // Store user data in Redux
+//       if (formData.type === "employee") {
+//         dispatch(
+//           loginUser({
+//             username: formData.username,
+//             email: formData.email,
+//             userId: response.data.userId,
+//           })
+//         );
+//       } else if (formData.type === "company") {
+//         dispatch(
+//           loginCompany({
+//             companyName: formData.username,
+//             email: formData.email,
+//             companyId: response.data.companyId,
+//           })
+//         );
+//       }
+
+//       alert(`Signup successful! Your ID: ${response.data.userId || response.data.companyId}`);
+//       navigate("/home"); // Redirect immediately
+
+//     } catch (error) {
+//       console.error("Signup error:", error.response?.data);
+//       setErrorMessage(error.response?.data?.message || "Signup failed. Please try again.");
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
+
+//   return (
+//     <AuthLayout title="Create Account">
+//       <form onSubmit={handleSubmit} className="space-y-6">
+//         {/* Error Message */}
+//         {errorMessage && (
+//           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-red-600 bg-red-100 p-2 rounded-md">
+//             {errorMessage}
+//           </motion.div>
+//         )}
+
+//         {/* Username / Company Name */}
+//         <label htmlFor="username" className="block text-gray-700">Username / Company Name</label>
+//         <input
+//           id="username"
+//           type="text"
+//           name="username"
+//           placeholder="Enter your name"
+//           value={formData.username}
+//           onChange={handleChange}
+//           required
+//           className="w-full px-4 py-3 rounded-lg border border-gray-300"
+//         />
+
+//         {/* Email */}
+//         <label htmlFor="email" className="block text-gray-700">Email Address</label>
+//         <input
+//           id="email"
+//           type="email"
+//           name="email"
+//           placeholder="Enter your email"
+//           value={formData.email}
+//           onChange={handleChange}
+//           required
+//           className="w-full px-4 py-3 rounded-lg border border-gray-300"
+//         />
+
+//         {/* Password */}
+//         <label htmlFor="password" className="block text-gray-700">Password</label>
+//         <div className="relative">
+//           <input
+//             id="password"
+//             type={showPassword ? "text" : "password"}
+//             name="password"
+//             placeholder="Enter your password"
+//             value={formData.password}
+//             onChange={handleChange}
+//             required
+//             className="w-full px-4 py-3 rounded-lg border border-gray-300"
+//           />
+//           <button
+//             type="button"
+//             onClick={() => setShowPassword(!showPassword)}
+//             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+//           >
+//             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+//           </button>
+//         </div>
+
+//         {/* Confirm Password */}
+//         <label htmlFor="confirmPassword" className="block text-gray-700">Confirm Password</label>
+//         <div className="relative">
+//           <input
+//             id="confirmPassword"
+//             type={showConfirmPassword ? "text" : "password"}
+//             name="confirmPassword"
+//             placeholder="Confirm your password"
+//             value={formData.confirmPassword}
+//             onChange={handleChange}
+//             required
+//             className="w-full px-4 py-3 rounded-lg border border-gray-300"
+//           />
+//           <button
+//             type="button"
+//             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+//             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+//           >
+//             {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+//           </button>
+//         </div>
+
+//         {/* Signup Type */}
+//         <label className="block text-gray-700">Signup as:</label>
+//         <select
+//           name="type"
+//           value={formData.type}
+//           onChange={handleChange}
+//           className="w-full px-4 py-3 rounded-lg border border-gray-300 cursor-pointer"
+//         >
+//           <option value="employee">Employee</option>
+//           <option value="company">Company</option>
+//         </select>
+
+//         {/* Signup Button */}
+//         <motion.button
+//           type="submit"
+//           className="w-full bg-[#008080] text-white py-3 rounded-lg hover:bg-teal-700 transition-all duration-300"
+//           disabled={isLoading}
+//         >
+//           {isLoading ? (
+//             <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+//           ) : (
+//             "Create Account"
+//           )}
+//         </motion.button>
+//       </form>
+
+//       {/* Redirect to Login */}
+//       <div className="mt-4 text-center">
+//         <p className="text-gray-700">
+//           Already have an account?
+//           <button onClick={() => navigate("/")} className="text-[#008080] hover:underline ml-1">
+//             Login
+//           </button>
+//         </p>
+//       </div>
+//     </AuthLayout>
+//   );
+// }
+
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Eye, EyeOff } from "lucide-react";
@@ -1353,9 +1560,12 @@ import { AuthLayout } from "./AuthLayout";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { loginUser, loginCompany } from "../RED/userSlice"; // Import Redux actions
+import { setUser } from "../../Redux/authSlice"; // Adjust path as needed
 
 export function SignupForm() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -1363,14 +1573,10 @@ export function SignupForm() {
     confirmPassword: "",
     type: "employee",
   });
-
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  
-  const navigate = useNavigate();
-  const dispatch = useDispatch(); // Redux dispatch
 
   // Handle input changes
   const handleChange = (e) => {
@@ -1389,7 +1595,6 @@ export function SignupForm() {
       setIsLoading(false);
       return;
     }
-
     if (formData.password.trim() !== formData.confirmPassword.trim()) {
       setErrorMessage("Passwords do not match.");
       setIsLoading(false);
@@ -1402,33 +1607,50 @@ export function SignupForm() {
         formData
       );
 
-      console.log("Signup successful:", response.data);
+      const data = response.data;
+      console.log("Signup successful:", data);
 
-      // Store user data in Redux
-      if (formData.type === "employee") {
-        dispatch(
-          loginUser({
-            username: formData.username,
-            email: formData.email,
-            userId: response.data.userId,
-          })
+      // Construct user details based on type
+      const userDetails = {
+        id: data.userId || data.companyId,
+        username: formData.type === "employee" ? formData.username : null,
+        companyName: formData.type === "company" ? formData.username : null,
+        email: formData.email,
+        profilePic: data.profilePic || "https://via.placeholder.com/150",
+      };
+
+      // Dispatch to Redux store
+      dispatch(
+        setUser({
+          user: userDetails,
+          userType: formData.type,
+        })
+      );
+
+      // Store token and essential data in localStorage
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userType", formData.type);
+        localStorage.setItem("userId", userDetails.id);
+        localStorage.setItem(
+          "name",
+          userDetails.username || userDetails.companyName
         );
-      } else if (formData.type === "company") {
-        dispatch(
-          loginCompany({
-            companyName: formData.username,
-            email: formData.email,
-            companyId: response.data.companyId,
-          })
-        );
+        localStorage.setItem("email", userDetails.email);
+        localStorage.setItem("profilePic", userDetails.profilePic);
       }
 
-      alert(`Signup successful! Your ID: ${response.data.userId || response.data.companyId}`);
-      navigate("/home"); // Redirect immediately
-
+      alert(
+        `Signup successful! Welcome, ${
+          userDetails.username || userDetails.companyName
+        }. Your ID: ${userDetails.id}`
+      );
+      navigate("/home");
     } catch (error) {
       console.error("Signup error:", error.response?.data);
-      setErrorMessage(error.response?.data?.message || "Signup failed. Please try again.");
+      setErrorMessage(
+        error.response?.data?.message || "Signup failed. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -1439,40 +1661,58 @@ export function SignupForm() {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Error Message */}
         {errorMessage && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-red-600 bg-red-100 p-2 rounded-md">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-red-600 bg-red-100 p-2 rounded-md"
+          >
             {errorMessage}
           </motion.div>
         )}
 
         {/* Username / Company Name */}
-        <label htmlFor="username" className="block text-gray-700">Username / Company Name</label>
-        <input
-          id="username"
-          type="text"
-          name="username"
-          placeholder="Enter your name"
-          value={formData.username}
-          onChange={handleChange}
-          required
-          className="w-full px-4 py-3 rounded-lg border border-gray-300"
-        />
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+          <label htmlFor="username" className="block text-gray-700 font-medium mb-2">
+            {formData.type === "employee" ? "Username" : "Company Name"}
+          </label>
+          <input
+            id="username"
+            type="text"
+            name="username"
+            placeholder={`Enter your ${formData.type === "employee" ? "username" : "company name"}`}
+            value={formData.username}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200"
+          />
+        </motion.div>
 
         {/* Email */}
-        <label htmlFor="email" className="block text-gray-700">Email Address</label>
-        <input
-          id="email"
-          type="email"
-          name="email"
-          placeholder="Enter your email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-          className="w-full px-4 py-3 rounded-lg border border-gray-300"
-        />
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+          <label htmlFor="email" className="block text-gray-700 font-medium mb-2">
+            Email Address
+          </label>
+          <input
+            id="email"
+            type="email"
+            name="email"
+            placeholder="Enter your email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200"
+          />
+        </motion.div>
 
         {/* Password */}
-        <label htmlFor="password" className="block text-gray-700">Password</label>
-        <div className="relative">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative"
+        >
+          <label htmlFor="password" className="block text-gray-700 font-medium mb-2">
+            Password
+          </label>
           <input
             id="password"
             type={showPassword ? "text" : "password"}
@@ -1481,20 +1721,26 @@ export function SignupForm() {
             value={formData.password}
             onChange={handleChange}
             required
-            className="w-full px-4 py-3 rounded-lg border border-gray-300"
+            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200"
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
           >
             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
           </button>
-        </div>
+        </motion.div>
 
         {/* Confirm Password */}
-        <label htmlFor="confirmPassword" className="block text-gray-700">Confirm Password</label>
-        <div className="relative">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative"
+        >
+          <label htmlFor="confirmPassword" className="block text-gray-700 font-medium mb-2">
+            Confirm Password
+          </label>
           <input
             id="confirmPassword"
             type={showConfirmPassword ? "text" : "password"}
@@ -1503,34 +1749,39 @@ export function SignupForm() {
             value={formData.confirmPassword}
             onChange={handleChange}
             required
-            className="w-full px-4 py-3 rounded-lg border border-gray-300"
+            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200"
           />
           <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
           >
             {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
           </button>
-        </div>
+        </motion.div>
 
         {/* Signup Type */}
-        <label className="block text-gray-700">Signup as:</label>
-        <select
-          name="type"
-          value={formData.type}
-          onChange={handleChange}
-          className="w-full px-4 py-3 rounded-lg border border-gray-300 cursor-pointer"
-        >
-          <option value="employee">Employee</option>
-          <option value="company">Company</option>
-        </select>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+          <label className="block text-gray-700 font-medium mb-2">Signup as:</label>
+          <select
+            name="type"
+            value={formData.type}
+            onChange={handleChange}
+            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200 cursor-pointer"
+          >
+            <option value="employee">Employee</option>
+            <option value="company">Company</option>
+          </select>
+        </motion.div>
 
         {/* Signup Button */}
         <motion.button
           type="submit"
-          className="w-full bg-[#008080] text-white py-3 rounded-lg hover:bg-teal-700 transition-all duration-300"
+          className="w-full bg-[#008080] text-white py-3 rounded-lg hover:bg-teal-700 transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden"
           disabled={isLoading}
+          whileTap={{ scale: 0.98 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
         >
           {isLoading ? (
             <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -1541,14 +1792,23 @@ export function SignupForm() {
       </form>
 
       {/* Redirect to Login */}
-      <div className="mt-4 text-center">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mt-4 text-center"
+      >
         <p className="text-gray-700">
-          Already have an account?
-          <button onClick={() => navigate("/")} className="text-[#008080] hover:underline ml-1">
+          Already have an account?{" "}
+          <button
+            onClick={() => navigate("/")}
+            className="text-[#008080] hover:underline"
+          >
             Login
           </button>
         </p>
-      </div>
+      </motion.div>
     </AuthLayout>
   );
 }
+
+export default SignupForm;

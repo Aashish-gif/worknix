@@ -877,7 +877,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Provider } from "react-redux"; // Import Redux Provider
-import { store } from "./Redux/store"; // Import the Redux store
+import  store  from "./store"; // Import the Redux store
 import LoginForm from "./components/Auth/LoginForm";
 import { SignupForm } from "./components/Auth/SignupForm"; // Fixed inconsistent path casing
 import ForgotPassword from "./components/Auth/ForgotPassword";

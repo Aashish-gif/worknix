@@ -2676,10 +2676,11 @@
 
 // export default Post;
 
+
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Heart, MessageCircle, Share2, MoreVertical } from "lucide-react";
-import { useSelector } from "react-redux"; // Use Redux instead of UserContext
+import { useSelector } from "react-redux"; // Use Redux to get user data
 import { formatDistanceToNow } from "date-fns";
 
 const API_BASE_URL = "https://worknix-addpost.onrender.com/api/posts";
@@ -2692,11 +2693,17 @@ const Post = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch(API_BASE_URL);
-        if (!response.ok) throw new Error("Failed to fetch posts");
+        const token = localStorage.getItem("token"); // Get token for authenticated request
+        const response = await fetch(API_BASE_URL, {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include token if required
+          },
+        });
+        if (!response.ok) throw new Error(`Failed to fetch posts: ${response.statusText}`);
         const data = await response.json();
         setPosts(data);
       } catch (err) {
+        console.error("Fetch error:", err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -2718,8 +2725,13 @@ const Post = () => {
 };
 
 const PostCard = ({ post, setPosts }) => {
-  const user = useSelector((state) => state.user); // Access the entire user object from Redux store
-  const { username, companyName, profilePic } = user || {}; // Safely destructure with fallback
+  // Access current user data from Redux store (authSlice) for actions
+  const { user } = useSelector((state) => state.auth) || {};
+  const currentUserId = user?.id; // Use this to check if the user can delete the post
+
+  // Use post-specific data for display
+  const displayName = post.name || "Anonymous"; // Use name from post data
+  const avatar = post.profilePic || "https://placehold.co/40/008080/FFF?text=U";
 
   const [isLiked, setIsLiked] = useState(false);
   const [showComments, setShowComments] = useState(false);
@@ -2727,10 +2739,6 @@ const PostCard = ({ post, setPosts }) => {
   const [localComments, setLocalComments] = useState(post.comments || []);
   const [commentText, setCommentText] = useState("");
   const [showOptions, setShowOptions] = useState(false);
-
-  // Use the username or companyName from Redux store
-  const displayName = username || companyName || "Unknown User";
-  const avatar = profilePic || "https://placehold.co/40/008080/FFF?text=U";
 
   // Format timestamp
   const timeAgo = post.createdAt
@@ -2751,9 +2759,13 @@ const PostCard = ({ post, setPosts }) => {
     setIsLiked(true);
 
     try {
+      const token = localStorage.getItem("token");
       const response = await fetch(`${API_BASE_URL}/${post._id}/like`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
       if (!response.ok) throw new Error("Failed to like post");
 
@@ -2763,6 +2775,7 @@ const PostCard = ({ post, setPosts }) => {
     } catch (error) {
       setLocalLikes((prev) => prev - 1);
       setIsLiked(false);
+      console.error("Error liking post:", error);
     }
   };
 
@@ -2771,9 +2784,13 @@ const PostCard = ({ post, setPosts }) => {
     if (!commentText.trim()) return;
 
     try {
+      const token = localStorage.getItem("token");
       const response = await fetch(`${API_BASE_URL}/${post._id}/comment`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ comment: commentText }),
       });
 
@@ -2786,12 +2803,21 @@ const PostCard = ({ post, setPosts }) => {
     }
   };
 
-  // Handle Delete Post
+  // Handle Delete Post (only if current user is the post author)
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete this post?")) return;
+    if (post.userId !== currentUserId) { // Assuming post has a userId field
+      console.log("You can only delete your own posts.");
+      return;
+    }
+
     try {
+      const token = localStorage.getItem("token");
       const response = await fetch(`${API_BASE_URL}/${post._id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       if (!response.ok) throw new Error("Failed to delete post");
       setPosts((prev) => prev.filter((p) => p._id !== post._id));
@@ -2817,10 +2843,13 @@ const PostCard = ({ post, setPosts }) => {
           </div>
         </div>
         <div className="relative">
-          <button onClick={() => setShowOptions(!showOptions)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+          <button
+            onClick={() => setShowOptions(!showOptions)}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+          >
             <MoreVertical size={20} className="text-gray-500" />
           </button>
-          {showOptions && (
+          {showOptions && post.userId === currentUserId && ( // Show delete option only for post author
             <div className="absolute right-0 mt-2 w-24 bg-white shadow-md rounded-md py-2 z-10">
               <button
                 onClick={handleDelete}
@@ -2847,11 +2876,17 @@ const PostCard = ({ post, setPosts }) => {
       )}
 
       <div className="mt-4 flex items-center gap-6">
-        <button onClick={handleLike} className="flex items-center gap-2 text-gray-500 hover:text-red-500 transition-colors">
+        <button
+          onClick={handleLike}
+          className="flex items-center gap-2 text-gray-500 hover:text-red-500 transition-colors"
+        >
           <Heart size={20} className={isLiked ? "fill-red-500 text-red-500" : ""} />
           <span>{localLikes}</span>
         </button>
-        <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-2 text-gray-500 hover:text-teal-600 transition-colors">
+        <button
+          onClick={() => setShowComments(!showComments)}
+          className="flex items-center gap-2 text-gray-500 hover:text-teal-600 transition-colors"
+        >
           <MessageCircle size={20} />
           <span>{localComments.length}</span>
         </button>
@@ -2869,7 +2904,10 @@ const PostCard = ({ post, setPosts }) => {
             placeholder="Add a comment..."
             className="border p-2 w-full rounded-md"
           />
-          <button onClick={handleAddComment} className="mt-2 bg-teal-600 text-white px-4 py-2 rounded-md">
+          <button
+            onClick={handleAddComment}
+            className="mt-2 bg-teal-600 text-white px-4 py-2 rounded-md"
+          >
             Comment
           </button>
         </div>
