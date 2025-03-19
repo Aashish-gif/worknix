@@ -543,7 +543,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, TrendingUp, Users, Calendar, Search, Hash, Star, ExternalLink } from 'lucide-react';
 import axios from 'axios';
-import { useSelector } from 'react-redux'; // Import useSelector to access Redux store
+import { useSelector } from 'react-redux';
 
 import { CreatePost } from './CreatePost';
 import Post from './Post';
@@ -556,6 +556,7 @@ export function Main() {
 
   // Access user data from Redux store (authSlice)
   const { user, userType } = useSelector((state) => state.auth) || {};
+  console.log("Redux state in Main:", { user, userType }); // Debug
   const displayName = userType === "employee" ? user?.username : user?.companyName || "Anonymous";
   const avatar = user?.profilePic || "https://placehold.co/40/008080/FFF?text=U";
 
@@ -600,13 +601,13 @@ export function Main() {
   // Handle new post creation
   const handleNewPost = (post) => {
     setPosts((prevPosts) => [{
-      _id: post._id || Date.now(), // Use _id from backend if available
-      name: displayName, // Use current user's name from Redux
+      _id: post._id || Date.now(),
+      name: displayName,
       profilePic: avatar,
       ...post,
       likes: 0,
       comments: [],
-      createdAt: new Date().toISOString(), // Use ISO format for consistency with Post.jsx
+      createdAt: new Date().toISOString(),
     }, ...prevPosts]);
   };
 
@@ -615,14 +616,27 @@ export function Main() {
     const fetchPosts = async () => {
       try {
         const token = localStorage.getItem("token");
+        if (!token) {
+          console.log("No token found, redirecting to login...");
+          window.location.href = "/login";
+          return;
+        }
+        console.log("Token being sent in fetchPosts:", token); // Debug
         const response = await axios.get('https://worknix-addpost.onrender.com/api/posts', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setPosts(response.data); // Expecting an array of posts
+        console.log("Fetched posts:", response.data);
+        setPosts(response.data);
       } catch (error) {
         console.error("Error fetching posts:", error.response || error.message);
+        if (error.response?.status === 403) {
+          console.log("Token invalid or expired, redirecting to login...");
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+          return;
+        }
         setError('Failed to fetch posts');
       }
     };
@@ -633,7 +647,7 @@ export function Main() {
         const sortedTopics = response.data
           .filter(topic => topic.members && !isNaN(parseInt(topic.members)))
           .sort((a, b) => parseInt(b.members) - parseInt(a.members))
-          .slice(0, 4); // Top 4 communities by members
+          .slice(0, 4);
         setTrendingTopics(sortedTopics);
       } catch (error) {
         console.error("Error fetching trending topics:", error.response || error.message);
@@ -648,7 +662,7 @@ export function Main() {
     };
 
     fetchData();
-  }, []); // Runs once on mount
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">

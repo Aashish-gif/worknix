@@ -58,6 +58,7 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const postRoutes = require("./routes/postRoutes");
+const authRoutes = require("./routes/authRoutes"); // Add this
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const cloudinary = require("cloudinary").v2;
 const multer = require("multer");
@@ -94,6 +95,7 @@ mongoose
 
 // Routes
 app.use("/api/posts", upload.single("media"), postRoutes);
+app.use("/api/auth", authRoutes); // Add this
 
 // Server Initialization
 const PORT = process.env.PORT || 5000;

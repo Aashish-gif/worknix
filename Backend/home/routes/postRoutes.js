@@ -637,37 +637,22 @@
 const express = require("express");
 const router = express.Router();
 const Post = require("../models/Post");
-const jwt = require("jsonwebtoken");
-
-// Middleware to verify JWT token
-const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-  if (!token) return res.status(401).json({ error: "Access denied" });
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // Add user info to request
-    next();
-  } catch (error) {
-    res.status(403).json({ error: "Invalid token" });
-  }
-};
+const auth = require("../middleware/auth"); // Use the same auth middleware
 
 // Create a new post
-router.post("/", authenticateToken, async (req, res) => {
+router.post("/", auth, async (req, res) => {
   try {
     const { description, name } = req.body;
     console.log("Received post data:", { description, name, file: req.file }); // Debug
 
     if (!description || !name) {
-      return res.status(400).json({ error: "Description and name are required" });
+      return res.status(400).json({ success: false, message: "Description and name are required" });
     }
 
     const newPost = new Post({
       description,
       name,
-      userId: req.user.id, // From JWT token
+      userId: req.userId, // From auth middleware
       mediaUrl: req.file ? req.file.path : null,
       mediaType: req.file ? req.file.mimetype : null,
       likes: 0,
@@ -676,81 +661,81 @@ router.post("/", authenticateToken, async (req, res) => {
     });
 
     const savedPost = await newPost.save();
-    res.status(201).json({ message: "Post created successfully", post: savedPost });
+    res.status(201).json({ success: true, message: "Post created successfully", post: savedPost });
   } catch (error) {
     console.error("Error creating post:", error);
-    res.status(500).json({ error: "Failed to create post" });
+    res.status(500).json({ success: false, message: "Failed to create post", error: error.message });
   }
 });
 
 // Get all posts
-router.get("/", authenticateToken, async (req, res) => {
+router.get("/", auth, async (req, res) => {
   try {
     const posts = await Post.find().sort({ createdAt: -1 });
     res.status(200).json(posts);
   } catch (error) {
     console.error("Error fetching posts:", error);
-    res.status(500).json({ error: "Failed to fetch posts" });
+    res.status(500).json({ success: false, message: "Failed to fetch posts", error: error.message });
   }
 });
 
 // Like a post
-router.patch("/:id/like", authenticateToken, async (req, res) => {
+router.patch("/:id/like", auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-    if (!post) return res.status(404).json({ error: "Post not found" });
+    if (!post) return res.status(404).json({ success: false, message: "Post not found" });
 
-    if (post.likedBy.includes(req.user.id)) {
-      return res.status(400).json({ error: "You have already liked this post" });
+    if (post.likedBy.includes(req.userId)) {
+      return res.status(400).json({ success: false, message: "You have already liked this post" });
     }
 
     post.likes += 1;
-    post.likedBy.push(req.user.id);
+    post.likedBy.push(req.userId);
     await post.save();
-    res.status(200).json({ message: "Post liked", post });
+    res.status(200).json({ success: true, message: "Post liked", post });
   } catch (error) {
     console.error("Error liking post:", error);
-    res.status(500).json({ error: "Failed to like post" });
+    res.status(500).json({ success: false, message: "Failed to like post", error: error.message });
   }
 });
 
 // Add a comment to a post
-router.patch("/:id/comment", authenticateToken, async (req, res) => {
+router.patch("/:id/comment", auth, async (req, res) => {
   try {
     const { comment } = req.body;
-    if (!comment) return res.status(400).json({ error: "Comment is required" });
+    if (!comment) return res.status(400).json({ success: false, message: "Comment is required" });
 
     const post = await Post.findById(req.params.id);
-    if (!post) return res.status(404).json({ error: "Post not found" });
+    if (!post) return res.status(404).json({ success: false, message: "Post not found" });
 
     post.comments.push({
-      user: req.user.id,
+      user: req.userId,
       text: comment,
       createdAt: new Date(),
     });
     await post.save();
-    res.status(200).json({ message: "Comment added", post });
+    res.status(200).json({ success: true, message: "Comment added", post });
   } catch (error) {
     console.error("Error adding comment:", error);
-    res.status(500).json({ error: "Failed to add comment" });
+    res.status(500).json({ success: false, message: "Failed to add comment", error: error.message });
   }
 });
 
 // Delete a post
-router.delete("/:id", authenticateToken, async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-    if (!post) return res.status(404).json({ error: "Post not found" });
+    if (!post) return res.status(404).json({ success: false, message: "Post not found" });
 
-    if (post.userId !== req.user.id) {
-      return res.status(403).json({ error: "You can only delete your own posts" });
+    if (post.userId !== req.userId) {
+      return res.status(403).json({ success: false, message: "You can only delete your own posts" });
     }
 
     await Post.findByIdAndDelete(req.params.id);
-    res.status(200).json({ message: "Post deleted" });
+    res.status(200).json({ success: true, message: "Post deleted" });
   } catch (error) {
     console.error("Error deleting post:", error);
-    res.status(500).json({ error: "Failed to delete post" });
+    res.status(500).json({ success: false, message: "Failed to delete post", error: error.message });
   }
 });
 
