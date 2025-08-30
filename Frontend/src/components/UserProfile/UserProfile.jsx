@@ -137,7 +137,7 @@ import "./UserProfile.css";
 import User_plate from "./User_plate";
 import Footer from "../Common/Footer";
 import NavigationBar from "../Common/NavigationBar"; // Fixed Sidebar
-import Performance from "./Performance";
+import Performance from "./performance";
 import Goals from "./Goals";
 import Batches from "./Batches";
 import CareerPath from "./CareerPath";
