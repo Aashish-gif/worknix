@@ -1266,7 +1266,7 @@ import ResetPassword from "./components/Auth/ResetPassword";
 
 // Main Components
 import Home from "./components/Home/Home";
-import Community from "./components/Community/Community";
+import Community from "./components/Community/community";
 import TodaysStats from "./components/TodaysStats/TodaysStats";
 import UserProfile from "./components/UserProfile/UserProfile";
 import Profiles from "./components/UserProfile/Profiles";
